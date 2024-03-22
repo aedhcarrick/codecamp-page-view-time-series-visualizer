@@ -14,7 +14,7 @@ def draw_line_plot():
     # Draw line plot
     # The title should be Daily freeCodeCamp Forum Page Views 5/2016-12/2019. 
     # The label on the x axis should be Date and the label on the y axis should be Page Views.   
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(14,5))
     ax.plot(df.index, df['value'])
     ax.set_title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
     ax.set_xlabel('Date')
@@ -31,6 +31,15 @@ def draw_bar_plot():
     # The legend should show month labels and have a title of Months. 
     # On the chart, the label on the x axis should be Years and the label on the y axis should be Average Page Views.
     df_bar = df.copy()
+    df_bar = df_bar.groupby([df.index.year, df.index.month]).mean()
+    df_bar.index.rename(['year', 'month'], inplace=True)
+    df_bar = df_bar.unstack(level=1)['value']
+    print(df_bar)
+
+#    plot = sns.catplot(x='year', y='value', 
+#           hue=df_bar.index, data=df_bar, kind='bar')
+    fig, ax = plt.subplots(figsize=(14,5))
+    ax = df_bar.plot(kind='bar', xlabel='Year', ylabel='Mean Page Views')
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
