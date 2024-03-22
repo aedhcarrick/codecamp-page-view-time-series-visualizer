@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
@@ -33,13 +34,17 @@ def draw_bar_plot():
     df_bar = df.copy()
     df_bar = df_bar.groupby([df.index.year, df.index.month]).mean()
     df_bar.index.rename(['year', 'month'], inplace=True)
-    df_bar = df_bar.unstack(level=1)['value']
-    print(df_bar)
-
-#    plot = sns.catplot(x='year', y='value', 
-#           hue=df_bar.index, data=df_bar, kind='bar')
+    df_bar = df_bar.reset_index()
+    df_bar['month'] = pd.to_datetime(df_bar['month'], format='%m').dt.month_name().str.slice(stop=3)
+    df_bar = df_bar.pivot(index='year',columns='month',values='value')
+    df_bar = df_bar[['Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']] 
+#    plot = sns.catplot(x='year', y='value', hue='month', data=df_bar, 
+#            kind='bar')  <-- don't work??
     fig, ax = plt.subplots(figsize=(14,5))
-    ax = df_bar.plot(kind='bar', xlabel='Year', ylabel='Mean Page Views')
+    df_bar.plot(ax=ax, kind='bar')
+    ax.set_xlabel('Year')
+    ax.set_ylabel('Average Page Views')
+    ax.legend(loc='upper left')
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
@@ -52,8 +57,11 @@ def draw_box_plot():
     df_box['year'] = [d.year for d in df_box.date]
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
-    # Draw box plots (using Seaborn)
-
+    # Create a draw_box_plot function that uses Seaborn to draw two adjacent box plots similar to "examples/Figure_3.png". 
+    # These box plots should show how the values are distributed within a given year or month and how it compares over time. 
+    # The title of the first chart should be Year-wise Box Plot (Trend) 
+    # and the title of the second chart should be Month-wise Box Plot (Seasonality). 
+    # Make sure the month labels on bottom start at Jan and the x and y axis are labeled correctly.
 
 
 
